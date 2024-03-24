@@ -14,7 +14,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='en'>
+		<html lang='es'>
 			<body className={`${poppins.className} antialiased flex flex-col min-h-screen`}>
 				<Navbar />
 				<main className='flex-grow'>{children}</main>
