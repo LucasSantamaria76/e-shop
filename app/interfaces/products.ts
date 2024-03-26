@@ -24,7 +24,7 @@ export interface IProductDB {
   products_in_stock: IProductInStockDB[];
 }
 
-export interface IProduct {
+/* export interface IProduct {
   productId: string;
   name: string;
   stock: number;
@@ -36,3 +36,4 @@ export interface IProduct {
   size: string;
   images: string[];
 }
+ */
