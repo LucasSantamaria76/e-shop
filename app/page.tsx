@@ -1,78 +1,71 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-'use client';
-
-import { useEffect } from 'react';
-import { initialGetData } from './data';
-import { useShopStore } from './store/shopStore';
-
-/* 
 import { CardProduct } from './components';
-import { IProduct, IProductDB } from './interfaces/products';
 import CreateSupabaseServerClient from './supabase/server';
+import { QueryData } from '@supabase/supabase-js';
+import { ISizes } from './types';
 
-const getProducts = async (): Promise<IProduct[] | any> => {
+const getProducts = async () => {
 	try {
 		const supabase = await CreateSupabaseServerClient();
-
-		const { data, error } = await supabase
+		const productsWithInStockQuery = supabase
 			.from('products')
-			.select('*,products_in_stock(size_id,color_id,stock,images,price)');
-		const { data: colors } = await supabase.from('colors').select('*');
+			.select('*,products_in_stock(*),sizes(name,sizes_id)');
 
-		const { data: sizes } = await supabase.from('sizes').select('sizes_id, name');
+		type TProductsWithInStock = QueryData<typeof productsWithInStockQuery>;
 
-		if (error) throw new Error(error.message);
+		const { data, error } = await productsWithInStockQuery;
 
-		const products = data.map(
-			({
-				product_id,
-				name,
-				slug,
-				description,
-				subcategory_id,
-				category_id,
-				products_in_stock,
-			}: IProductDB) => ({
-				productId: product_id,
-				name,
-				stock: products_in_stock[0]?.stock,
-				price: products_in_stock[0]?.price,
-				slug,
-				description,
-				subcategoryId: subcategory_id,
-				categoryId: category_id,
-				color: colors?.find((el) => el.color_id === products_in_stock[0]?.color_id)?.name,
-				size: sizes?.find((el) => el.sizes_id === products_in_stock[0]?.size_id)?.name,
-				images: products_in_stock[0]?.images,
-				sizesAvailable: products_in_stock.map(
-					(product) => sizes?.find((el) => el.sizes_id === product?.size_id)?.name
-				),
-			})
-		);
+		if (error) throw error;
+		const productsWithInStock: TProductsWithInStock = data;
 
-		return products;
+		/* productsWithInStock.forEach((product) => {
+			console.log(product.sizes);
+		}); */
+
+		return productsWithInStock?.map((product) => ({
+			productId: product.product_id,
+			name: product.name,
+			description: product.description,
+			categoryId: product.category_id,
+			subcategoryId: product.subcategory_id,
+			images: product.products_in_stock.reduce(
+				(acc: string[], value) => [...acc, ...value.images],
+				[]
+			),
+			availableColours: product.products_in_stock.reduce((acc: string[], value) => {
+				!acc.includes(value.color) && acc.push(value.color);
+				return acc;
+			}, []),
+
+			availableSizes: product.sizes
+				.reduce((acc: ISizes[], value) => {
+					!acc.filter((el) => el.sizes_id === value.sizes_id).length && acc.push(value);
+					return acc;
+				}, [])
+				.sort((a, b) => a.sizes_id - b.sizes_id),
+		}));
 	} catch (error) {
 		console.log(error);
-		return error;
 	}
-}; */
+};
 
-export default function Home() {
-	const setSizes = useShopStore.use.setData();
-
-	const setInitialData = async () => {
-		const data = await initialGetData();
-
-		setSizes(data);
-	};
-
-	useEffect(() => {
-		setInitialData();
-	}, []);
+export default async function Home() {
+	const products = await getProducts();
 
 	return (
 		<div className='flex flex-wrap w-11/12 mx-auto gap-2 mt-8'>
-			{/* {products && products.map((product: IProduct) => <CardProduct key={product.productId} {...product} />)} */}
+			{products?.map((product) => (
+				<CardProduct
+					productId={product.productId}
+					name={product.name}
+					description={product.description}
+					categoryId={product.categoryId}
+					subcategoryId={product.subcategoryId}
+					images={product.images}
+					availableColours={product.availableColours}
+					availableSizes={product.availableSizes}
+					key={product.productId}
+				/>
+			))}
 		</div>
 	);
 }

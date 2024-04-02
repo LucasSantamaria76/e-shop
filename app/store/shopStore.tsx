@@ -1,21 +1,36 @@
 import { create } from 'zustand';
-import { ICategories, IColors, IData, ISizes } from '../interfaces';
+import {
+	ICategories,
+	IColors,
+	IData,
+	IProduct,
+	IProductStore,
+	ISizes,
+	ISubCategories,
+} from '../interfaces';
 import { createSelectors } from './createSelectors';
 import { devtools } from 'zustand/middleware';
 
 interface IShopStore {
 	sizes: ISizes;
-	colors: IColors;
 	categories: ICategories;
+	subCategories: ISubCategories;
+	products: IProductStore;
 	setData: (data: IData) => void;
+	getProduct: (slug: string) => IProduct;
 }
 
 const useShopStoreBase = create<IShopStore>()(
-	devtools((set) => ({
+	devtools((set, get) => ({
 		sizes: {},
-		colors: {},
 		categories: {},
+		subCategories: {},
+		products: {},
 		setData: (data: IData) => set({ ...data }),
+		getProduct: (slug: string) => {
+			const product = get().products;
+			return product[slug];
+		},
 	}))
 );
 
