@@ -5,10 +5,12 @@ import Image from 'next/image';
 import { colors } from '@/app/libs/colors';
 import { redressed } from '@/app/fonts';
 import useProduct from '@/app/hooks/useProduct';
+import { useShopStore } from '@/app/store/shopStore';
 
 type Props = { params: { id: string } };
 
 const ProductPage = ({ params: { id } }: Props) => {
+	const addToCart = useShopStore.use.addToCart();
 	const {
 		availableSizes,
 		colorSelected,
@@ -24,27 +26,28 @@ const ProductPage = ({ params: { id } }: Props) => {
 			<div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<div className='flex flex-col md:flex-row mx-4'>
 					<div className='flex flex-col w-1/2 px-4'>
-						<div className='h-[460px] rounded-lg bg-gray-300 mb-4'>
-							<Image
-								className='object-cover w-full h-full aspect-auto'
-								width={400}
-								height={400}
-								src={
-									productSelected?.images[0]
-										? productSelected?.images[0]
-										: 'https://colegiocei.es/wp-content/uploads/2023/12/producto-sin-imagen.png'
-								}
-								alt={''}
-							/>
-						</div>
+						<Image
+							className='object-contain w-[400px] h-[400px] mb-4 rounded-md'
+							width={400}
+							height={400}
+							src={
+								productSelected?.images[0]
+									? productSelected?.images[0]
+									: 'https://colegiocei.es/wp-content/uploads/2023/12/producto-sin-imagen.png'
+							}
+							alt={''}
+						/>
 						<div className='flex -mx-2 mb-4'>
 							<div className='w-1/2 px-2'>
-								<button className='w-full bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800'>
-									Añadir al carrito
+								<button
+									disabled={!productSelected}
+									onClick={() => addToCart(productSelected?.slug!, productSelected!)}
+									className='w-full bg-blue-900 text-white text-sm py-2 px-4 rounded-full shadow shadow-black active:shadow-none hover:bg-gray-700 disabled:bg-gray-200 disabled:hover:bg-none disabled:cursor-not-allowed'>
+									Añadir producto al carrito
 								</button>
 							</div>
 							<div className='w-1/2 px-2'>
-								<button className='w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-bold hover:bg-gray-300'>
+								<button className='w-full bg-cyan-600/20 text-sm text-gray-800 py-2 px-4 rounded-full shadow shadow-black active:shadow-none hover:bg-cyan-300/30'>
 									Añadir a la lista de deseos
 								</button>
 							</div>
@@ -57,16 +60,20 @@ const ProductPage = ({ params: { id } }: Props) => {
 
 						<div className='mr-4'>
 							<span className='font-bold text-gray-700'>Precio:</span>
-							{productSelected && (
+							{productSelected ? (
 								<span className='text-gray-600'> {formatPrice(productSelected?.price!)}</span>
+							) : (
+								<span className='text-red-500 ml-2'>No disponible</span>
 							)}
 						</div>
 						<div>
 							<span className='font-bold text-gray-700'>Disponibilidad: </span>
-							{productSelected && (
+							{productSelected ? (
 								<span className='text-gray-600'>{`${productSelected?.stock} unidad${
 									productSelected?.stock === 1 ? '' : 'es'
 								} en stock`}</span>
+							) : (
+								<span className='text-red-500 ml-2'>Sin stock</span>
 							)}
 						</div>
 						<div className='mb-4'>

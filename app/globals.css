@@ -5,3 +5,12 @@
 html {
   user-select: none;
 }
+
+*::-webkit-scrollbar {
+  width: 4px;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #1e40af;
+}

@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/app/supabase/client';
 import { QueryData } from '@supabase/supabase-js';
-import { ISizes } from '@/app/types';
+import { ISizes, TDetailsProduct } from '@/app/types';
 
 const getProduct = async (id: string) => {
 	try {
@@ -37,16 +37,6 @@ type TProduct = {
 	availableColours: string[] | null;
 } | null;
 
-type TDetailsProduct = {
-	color: string;
-	images: string[];
-	price: number;
-	product_id: string;
-	size_id: number;
-	slug: string;
-	stock: number;
-};
-
 type TProductInStock = {
 	[key: string]: TDetailsProduct | null;
 };
@@ -72,14 +62,16 @@ function useProduct(id: string) {
 				product_id: product!.product_id,
 				subcategory_id: product!.subcategory_id,
 			});
-			setColorSelected(product!.products_in_stock[0].color);
-			setSizeSelected(product!.products_in_stock[0].sizes?.name!);
-			setProductInStock(
-				product!.products_in_stock.reduce((acc: TProductInStock, value: TDetailsProduct) => {
-					acc[value?.slug] = value;
-					return acc;
-				}, {})
-			);
+			if (product!.products_in_stock.length) {
+				setColorSelected(product!.products_in_stock[0].color);
+				setSizeSelected(product!.products_in_stock[0].sizes?.name!);
+				setProductInStock(
+					product!.products_in_stock.reduce((acc: TProductInStock, value: TDetailsProduct) => {
+						acc[value?.slug] = value;
+						return acc;
+					}, {})
+				);
+			}
 		});
 	}, []);
 
