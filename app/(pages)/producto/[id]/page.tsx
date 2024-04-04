@@ -1,11 +1,18 @@
 'use client';
 
+/* ***************** */
+
 import { formatPrice } from '@/app/libs';
 import Image from 'next/image';
 import { colors } from '@/app/libs/colors';
 import { redressed } from '@/app/fonts';
 import useProduct from '@/app/hooks/useProduct';
 import { useShopStore } from '@/app/store/shopStore';
+import { Thumbnail } from '@/app/components';
+import { useState } from 'react';
+import Link from 'next/link';
+import { RiArrowLeftLine } from '@remixicon/react';
+import { DetailsProductSkeleton } from '@/app/components/skeletons';
 
 type Props = { params: { id: string } };
 
@@ -20,22 +27,35 @@ const ProductPage = ({ params: { id } }: Props) => {
 		sizeSelected,
 		setSizeSelected,
 	} = useProduct(id);
+	const [imageSelected, setImageSelected] = useState(0);
+
+	if (!product?.name) return <DetailsProductSkeleton />;
 
 	return (
-		<div className='bg-gray-100 py-8 h-screen'>
+		<div className='relative bg-gray-100 py-8 h-screen'>
+			<Link
+				href={'/'}
+				className='absolute top-2 left-2 bg-cyan-600/20 text-sm text-gray-800 py-1 px-1 rounded-md shadow shadow-black active:shadow-none hover:bg-cyan-300/30'>
+				<RiArrowLeftLine />
+			</Link>
 			<div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<div className='flex flex-col md:flex-row mx-4'>
 					<div className='flex flex-col w-1/2 px-4'>
 						<Image
-							className='object-contain w-[400px] h-[400px] mb-4 rounded-md'
+							className='object-contain w-[400px] h-[400px] mb-1 rounded-md'
 							width={400}
 							height={400}
 							src={
-								productSelected?.images[0]
-									? productSelected?.images[0]
+								productSelected?.images[imageSelected]
+									? productSelected?.images[imageSelected]
 									: 'https://colegiocei.es/wp-content/uploads/2023/12/producto-sin-imagen.png'
 							}
 							alt={''}
+						/>
+						<Thumbnail
+							images={productSelected?.images || []}
+							imageSelected={imageSelected}
+							setImageSelected={setImageSelected}
 						/>
 						<div className='flex -mx-2 mb-4'>
 							<div className='w-1/2 px-2'>
@@ -96,7 +116,7 @@ const ProductPage = ({ params: { id } }: Props) => {
 								{availableSizes?.map((size) => (
 									<button
 										className={`bg-gray-300 text-gray-700 mr-2 py-1 px-4 rounded-md font-bold border border-gray-500 hover:bg-gray-500 ${
-											sizeSelected === size.name && 'bg-gray-500'
+											sizeSelected === size.name && 'bg-gray-500 text-white'
 										}`}
 										onClick={() => setSizeSelected(size.name)}
 										key={size.sizes_id}>

@@ -17,10 +17,6 @@ const getProducts = async () => {
 		if (error) throw error;
 		const productsWithInStock: TProductsWithInStock = data;
 
-		/* productsWithInStock.forEach((product) => {
-			console.log(product.sizes);
-		}); */
-
 		return productsWithInStock?.map((product) => ({
 			productId: product.product_id,
 			name: product.name,

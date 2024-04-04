@@ -1,8 +1,9 @@
+/* ***************** */
 'use client';
 
 import { useModalStore, MODAL_CART } from '@/app/store/modalStore';
 import { IProductCart, useShopStore } from '@/app/store/shopStore';
-import { Button, Dialog, DialogPanel } from '@tremor/react';
+import { Dialog, DialogPanel } from '@tremor/react';
 import { ModalCartItem } from '..';
 import { formatPrice } from '@/app/libs';
 
@@ -10,6 +11,7 @@ const CartDialog = () => {
 	const onClose = useModalStore.use.onClose();
 	const isOpen = useModalStore.use[MODAL_CART]();
 	const productsInCart = useShopStore.use.cart();
+	const totalItems = useShopStore.use.totalItems();
 
 	return (
 		<Dialog
@@ -34,19 +36,27 @@ const CartDialog = () => {
 						</h3>
 					)}
 				</div>
-				{Object.keys(productsInCart).length ? (
-					<div className='flex items-center justify-end gap-4 mb-4 font-bold  border-t-2 border-gray-300 pt-2'>
-						<span>Total de la compra:</span>
-						<span className='text-red-500'>
-							{formatPrice(
-								Object.values(productsInCart).reduce(
-									(sum: number, value: IProductCart) => sum + value.price * value.quantity,
-									0
-								)
-							)}
-						</span>
+				<div className='flex items-center justify-between  border-t-2 border-gray-300 pt-2'>
+					<div className='flex flex-col'>
+						<p className='text-xs'>Cantidad de items</p>
+						<p className='text-xs'>
+							en el carrito<span className='font-bold text-red-400 text-sm ml-2'>{totalItems}</span>
+						</p>
 					</div>
-				) : null}
+					{Object.keys(productsInCart).length ? (
+						<div className='flex items-center justify-end gap-4 mb-4 font-bold'>
+							<span>Total de la compra:</span>
+							<span className='text-red-500'>
+								{formatPrice(
+									Object.values(productsInCart).reduce(
+										(sum: number, value: IProductCart) => sum + value.price * value.quantity,
+										0
+									)
+								)}
+							</span>
+						</div>
+					) : null}
+				</div>
 				<button
 					className='w-full bg-blue-900 text-white text-sm mb-2 py-2 px-4 rounded-md shadow shadow-black active:shadow-none hover:bg-gray-700 disabled:bg-gray-200 disabled:hover:bg-none disabled:cursor-not-allowed'
 					onClick={() => onClose(MODAL_CART)}>

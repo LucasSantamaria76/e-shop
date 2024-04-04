@@ -1,7 +1,10 @@
 'use client';
 
+/* ***************** */
+
+
 import Link from 'next/link';
-import { Container, ModalCartItem } from '.';
+import { Container } from '.';
 import { redressed } from '../fonts';
 import { RiAccountCircleLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/react';
 import { Badge, Icon, TextInput } from '@tremor/react';

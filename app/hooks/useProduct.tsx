@@ -66,7 +66,7 @@ function useProduct(id: string) {
 				setColorSelected(product!.products_in_stock[0].color);
 				setSizeSelected(product!.products_in_stock[0].sizes?.name!);
 				setProductInStock(
-					product!.products_in_stock.reduce((acc: TProductInStock, value: TDetailsProduct) => {
+					product!.products_in_stock.reduce((acc: TProductInStock, value: any) => {
 						acc[value?.slug] = value;
 						return acc;
 					}, {})
