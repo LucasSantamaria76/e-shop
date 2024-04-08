@@ -5,13 +5,24 @@ import { create } from 'zustand';
 import { createSelectors } from './createSelectors';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { ISizes, TDetailsProduct } from '../types';
+import { ISizes, TDetailsProduct, TProductInStore } from '../types';
+import { supabase } from '../supabase/client';
+import { QueryData } from '@supabase/supabase-js';
+
+export const ProductsInDB = supabase
+	.from('products')
+	.select(
+		'*,categories(name),subcategories(name),products_in_stock(images,color,sizes(name,sizes_id))'
+	);
+
+export type TProductsInDB = QueryData<typeof ProductsInDB>;
 
 export interface IProductCart extends TDetailsProduct {
 	quantity: number;
 }
 
 interface IState {
+	products: TProductInStore[];
 	cart: Record<string, IProductCart>;
 	totalItems: number;
 }
@@ -20,9 +31,11 @@ interface IActions {
 	addToCart: (ItemKey: string, product: TDetailsProduct) => void;
 	increaseItemQuantity: (Item: string) => void;
 	decreaseItemQuantity: (Item: string) => void;
+	setProducts: (products: TProductsInDB) => void;
 }
 
 const INITIAL_STATE: IState = {
+	products: [],
 	cart: {},
 	totalItems: 0,
 };
@@ -62,6 +75,33 @@ const useShopStoreBase = create<IState & IActions>()(
 						delete state.cart[Item];
 					}
 					return state;
+				}),
+			setProducts: (products: TProductsInDB) =>
+				set({
+					//@ts-ignore
+					products: products?.map(
+						({ product_id, name, description, categories, subcategories, products_in_stock }) => ({
+							category: categories?.name,
+							description,
+							image:
+								products_in_stock[0]?.images[0] ||
+								'https://colegiocei.es/wp-content/uploads/2023/12/producto-sin-imagen.png',
+							name,
+							productID: product_id,
+							subCategory: subcategories?.name,
+							availableSizes: products_in_stock
+								.reduce((acc: ISizes[], value) => {
+									!acc.filter((el) => el.sizes_id === value.sizes?.sizes_id).length &&
+										acc.push(value.sizes!);
+									return acc;
+								}, [])
+								.sort((a: ISizes, b: ISizes) => a.sizes_id - b.sizes_id),
+							availableColours: products_in_stock.reduce((acc: string[], value) => {
+								!acc.includes(value.color) && acc.push(value.color);
+								return acc;
+							}, []),
+						})
+					),
 				}),
 		}))
 	)

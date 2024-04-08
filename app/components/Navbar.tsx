@@ -1,22 +1,39 @@
 'use client';
 
-/* ***************** */
-
-
 import Link from 'next/link';
 import { Container } from '.';
 import { redressed } from '../fonts';
-import { RiAccountCircleLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/react';
-import { Badge, Icon, TextInput } from '@tremor/react';
-import { useShopStore } from '../store/shopStore';
-import { MODAL_CART, useModalStore } from '../store/modalStore';
-import { CartDialog } from './dialogs';
+import { PiShoppingCartThin } from 'react-icons/pi';
+import { ProductsInDB, TProductsInDB, useShopStore } from '../store/shopStore';
+import { MODAL_CART, MODAL_SEARCH, useModalStore } from '../store/modalStore';
+import { CartDialog, SearchDialog } from './dialogs';
+import { Badge, Button, TextInput } from 'flowbite-react';
+import { CiUser } from 'react-icons/ci';
+import { useEffect } from 'react';
+
+const getProducts = async () => {
+	try {
+		const { data, error } = await ProductsInDB;
+
+		if (error) throw error;
+		const products: TProductsInDB = data;
+
+		return products;
+	} catch (error) {
+		console.error(error);
+	}
+};
 
 type NavbarProps = {};
 
 export const Navbar = (props: NavbarProps) => {
 	const totalItems = useShopStore.use.totalItems();
 	const onShow = useModalStore.use.onShow();
+	const setProducts = useShopStore.use.setProducts();
+
+	useEffect(() => {
+		getProducts().then((products: any) => setProducts(products));
+	}, [setProducts]);
 
 	return (
 		<>
@@ -27,33 +44,18 @@ export const Navbar = (props: NavbarProps) => {
 							E-Shop
 						</Link>
 
-						<TextInput
-							icon={RiSearchLine}
-							placeholder='Buscar Producto...'
-							className='hidden md:flex w-1/2'
-						/>
+						<SearchDialog />
 
-						<div className='relative flex items-center gap-8 md:gap-12'>
-							<Badge className='absolute -top-[6px] left-7' size='xs' color='red'>
-								{totalItems}
-							</Badge>
-
-							<Icon
-								icon={RiShoppingCart2Line}
-								variant='shadow'
-								tooltip='Mi carrito'
-								size='md'
-								className='cursor-pointer'
-								onClick={() => onShow(MODAL_CART)}
-							/>
-
-							<Icon
-								icon={RiAccountCircleLine}
-								variant='shadow'
-								tooltip='Iniciar sesión'
-								size='md'
-								className='cursor-pointer'
-							/>
+						<div
+							className='relative flex items-center gap-8 md:gap-12 cursor-pointer'
+							onClick={() => onShow(MODAL_CART)}>
+							<PiShoppingCartThin size={40} />
+							{totalItems ? (
+								<Badge className='absolute -top-[7px] left-[10px] flex items-start justify-center w-5 h-6 bg-cyan-500/25 border border-black text-[10px] text-black font-extralight z-0'>
+									{totalItems}
+								</Badge>
+							) : null}
+							<CiUser size={40} />
 						</div>
 					</div>
 				</Container>

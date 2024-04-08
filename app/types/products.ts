@@ -24,3 +24,14 @@ export type TDetailsProduct = {
 	slug: string;
 	stock: number;
 };
+
+export type TProductInStore = {
+	category: string;
+	description: string;
+	image: string;
+	name: string;
+	productID: string;
+	subCategory: string;
+	availableColours: string[];
+	availableSizes: ISizes[];
+};

@@ -1,7 +1,7 @@
 import { formatPrice } from '@/app/libs';
-import { ISizes } from '../../types';
+import { ISizes } from '../../../types';
 import Image from 'next/image';
-import { IncreaseDecreaseQuantity } from '..';
+import { IncreaseDecreaseQuantity } from '../..';
 
 interface Props {
 	color: string;
@@ -17,7 +17,7 @@ interface Props {
 function ModalCartItem({ color, images, price, sizes, slug, quantity, stock }: Props) {
 	return (
 		<div className='flex items-center justify-between text-xs mb-1 border border-gray-300 rounded-md px-1 w-[98%]'>
-			<div className='flex items-center gap-2 my-1'>
+			<div className='flex items-center gap-2 my-1 w-[40%]'>
 				<Image
 					src={
 						images[0]
@@ -35,11 +35,11 @@ function ModalCartItem({ color, images, price, sizes, slug, quantity, stock }: P
 					<p className='text-center border border-blue-300 rounded-md'>{sizes.name}</p>
 				</div>
 			</div>
-			<div className='flex flex-col items-center justify-center gap-1'>
+			<div className='flex flex-col items-center justify-center gap-2 w-[20%]'>
 				<IncreaseDecreaseQuantity Item={slug} />
 				<p className='font-bold'>{formatPrice(price)}</p>
 			</div>
-			<div>
+			<div className=' w-[40%] text-right'>
 				<p>Stock: {stock}</p>
 				<p className='font-bold text-lg text-red-400'>{formatPrice(price * quantity)}</p>
 			</div>

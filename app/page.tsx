@@ -48,7 +48,7 @@ export default async function Home() {
 	const products = await getProducts();
 
 	return (
-		<div className='flex flex-wrap w-11/12 mx-auto gap-2 mt-8'>
+		<div className='flex justify-center flex-wrap gap-8 mt-8 max-w-[1920px] mx-auto px-4 md:px-2 xl:px-20'>
 			{products?.map((product) => (
 				<CardProduct
 					productId={product.productId}

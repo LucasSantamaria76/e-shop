@@ -1,7 +1,5 @@
 'use client';
 
-/* ***************** */
-
 import { formatPrice } from '@/app/libs';
 import Image from 'next/image';
 import { colors } from '@/app/libs/colors';
@@ -11,8 +9,8 @@ import { useShopStore } from '@/app/store/shopStore';
 import { Thumbnail } from '@/app/components';
 import { useState } from 'react';
 import Link from 'next/link';
-import { RiArrowLeftLine } from '@remixicon/react';
 import { DetailsProductSkeleton } from '@/app/components/skeletons';
+import { LuArrowLeft } from 'react-icons/lu';
 
 type Props = { params: { id: string } };
 
@@ -33,10 +31,8 @@ const ProductPage = ({ params: { id } }: Props) => {
 
 	return (
 		<div className='relative bg-gray-100 py-8 h-screen'>
-			<Link
-				href={'/'}
-				className='absolute top-2 left-2 bg-cyan-600/20 text-sm text-gray-800 py-1 px-1 rounded-md shadow shadow-black active:shadow-none hover:bg-cyan-300/30'>
-				<RiArrowLeftLine />
+			<Link href={'/'} className='absolute top-2 left-2 btnCustom w-10 h-10'>
+				<LuArrowLeft size={28} />
 			</Link>
 			<div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<div className='flex flex-col md:flex-row mx-4'>
@@ -115,8 +111,11 @@ const ProductPage = ({ params: { id } }: Props) => {
 							<div className='flex items-center mt-2'>
 								{availableSizes?.map((size) => (
 									<button
-										className={`bg-gray-300 text-gray-700 mr-2 py-1 px-4 rounded-md font-bold border border-gray-500 hover:bg-gray-500 ${
-											sizeSelected === size.name && 'bg-gray-500 text-white'
+										// className={`bg-gray-300 text-gray-700 mr-2 py-1 px-4 rounded-md font-bold border border-gray-500 hover:bg-gray-500 ${
+										// 	sizeSelected === size.name && 'bg-gray-500 text-white'
+										// }`}
+										className={`mr-2 py-2 px-4 text-lg btnCustom ${
+											sizeSelected === size.name && 'selected'
 										}`}
 										onClick={() => setSizeSelected(size.name)}
 										key={size.sizes_id}>

@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware';
 import { createSelectors } from './createSelectors';
 
 export const MODAL_CART = 1;
+export const MODAL_SEARCH = 2;
 
 type State = {
 	[MODAL_CART]: boolean;
@@ -17,8 +18,10 @@ const initialState = {
 	[MODAL_CART]: false,
 };
 
-const useModalStoreBase = create<State & Actions>()(
-	devtools((set) => ({
+type TState = State & Actions;
+
+const useModalStoreBase = create<TState>()(
+	devtools((set, get) => ({
 		...initialState,
 		onClose: (modal: number) => set(() => ({ [modal]: false })),
 		onShow: (modal: number) => set(() => ({ [modal]: true })),
