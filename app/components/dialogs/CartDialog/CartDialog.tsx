@@ -1,18 +1,27 @@
-/* ***************** */
-'use client';
+'use client'
 
-import { useModalStore, MODAL_CART } from '@/app/store/modalStore';
-import { IProductCart, useShopStore } from '@/app/store/shopStore';
-import { Button, Modal } from 'flowbite-react';
-import { ModalCartItem } from '../..';
-import { formatPrice } from '@/app/libs';
-import { modalTheme } from '@/app/theme';
+import { useModalStore, MODAL_CART } from '@/app/store/modalStore'
+import { IProductCart, useShopStore } from '@/app/store/shopStore'
+import { Button, Modal } from 'flowbite-react'
+import { ModalCartItem } from '../..'
+import { formatPrice } from '@/app/libs'
+import { modalTheme } from '@/app/theme'
+import { FaRegTrashCan } from 'react-icons/fa6'
+import { useEffect } from 'react'
 
 const CartDialog = () => {
-	const onClose = useModalStore.use.onClose();
-	const isOpen = useModalStore.use[MODAL_CART]();
-	const productsInCart = useShopStore.use.cart();
-	const totalItems = useShopStore.use.totalItems();
+	const onClose = useModalStore.use.onClose()
+	const isOpen = useModalStore.use[MODAL_CART]()
+	const productsInCart = useShopStore.use.cart()
+	const resetCart = useShopStore.use.resetCart()
+	const totalItems = useShopStore.use.totalItems()
+
+	useEffect(() => {
+		!totalItems &&
+			setTimeout(() => {
+				onClose(MODAL_CART)
+			}, 1000)
+	}, [onClose, totalItems])
 
 	return (
 		<Modal
@@ -51,9 +60,12 @@ const CartDialog = () => {
 							en el carrito<span className='font-bold text-red-400 text-sm ml-2'>{totalItems}</span>
 						</p>
 					</div>
-
-					<div className='flex items-center justify-end gap-4 mb-4 font-bold'>
-						<span>Total de la compra:</span>
+					<Button gradientMonochrome='failure' onClick={resetCart}>
+						<FaRegTrashCan className='mr-2 h-4 w-4' />
+						Vaciar carrito
+					</Button>
+					<div className='flex flex-col items-end gap-1 mb-4 font-bold'>
+						<span>Total de la compra</span>
 						<span className='text-red-500'>
 							{formatPrice(
 								Object.values(productsInCart).reduce(
@@ -78,66 +90,6 @@ const CartDialog = () => {
 				) : null}
 			</Modal.Footer>
 		</Modal>
-	);
-};
-export default CartDialog;
-
-/* 
-
-<Dialog
-			open={isOpen}
-			onClose={() => onClose(MODAL_CART)}
-			static={true}
-			className='relative z-[100]'>
-			<DialogPanel className='absolute top-14 md:right-10 max-w-lg mx-auto md:mx-0 shadow-md shadow-black'>
-				<nav className='text-[10px] border-b border-gray-500 mb-5 flex items-center justify-between'>
-					<span>Nombre/color/talle</span>
-					<span>cantidad/precio</span>
-					<span>subTotal</span>
-				</nav>
-				<div className=' max-h-[400px] overflow-y-auto mb-4'>
-					{Object.keys(productsInCart).length ? (
-						Object.keys(productsInCart).map((productKey) => (
-							<ModalCartItem key={productKey} {...productsInCart[productKey]} />
-						))
-					) : (
-						<h3 className='text-lg text-red-700 font-bold text-center mb-5'>
-							No hay productos en el carrito
-						</h3>
-					)}
-				</div>
-				<div className='flex items-center justify-between  border-t-2 border-gray-300 pt-2'>
-					<div className='flex flex-col'>
-						<p className='text-xs'>Cantidad de items</p>
-						<p className='text-xs'>
-							en el carrito<span className='font-bold text-red-400 text-sm ml-2'>{totalItems}</span>
-						</p>
-					</div>
-					{Object.keys(productsInCart).length ? (
-						<div className='flex items-center justify-end gap-4 mb-4 font-bold'>
-							<span>Total de la compra:</span>
-							<span className='text-red-500'>
-								{formatPrice(
-									Object.values(productsInCart).reduce(
-										(sum: number, value: IProductCart) => sum + value.price * value.quantity,
-										0
-									)
-								)}
-							</span>
-						</div>
-					) : null}
-				</div>
-				<button
-					className='w-full bg-blue-900 text-white text-sm mb-2 py-2 px-4 rounded-md shadow shadow-black active:shadow-none hover:bg-gray-700 disabled:bg-gray-200 disabled:hover:bg-none disabled:cursor-not-allowed'
-					onClick={() => onClose(MODAL_CART)}>
-					Seguir comprando
-				</button>
-				{Object.keys(productsInCart).length ? (
-					<button className='w-full bg-cyan-600/20 text-sm text-gray-800 py-2 px-4 rounded-md shadow shadow-black active:shadow-none hover:bg-cyan-300/30'>
-						Finalizar compra
-					</button>
-				) : null}
-			</DialogPanel>
-		</Dialog>
-
-*/
+	)
+}
+export default CartDialog

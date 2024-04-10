@@ -11,19 +11,23 @@ const IncreaseDecreaseQuantity = ({ Item }: Props) => {
 	const decreaseItemQuantity = useShopStore.use.decreaseItemQuantity()
 
 	return (
-		<div className='flex items-center gap-2'>
-			<p className='text-gray-700 text-lg font-bold px-2 border border-black'>{quantity}</p>
-			<button
-				className='bg-gray-300 text-gray-700 text-lg px-2 rounded-md font-bold border border-gray-500 hover:bg-blue-200'
-				onClick={() => decreaseItemQuantity(Item)}>
-				-
-			</button>
-			<button
-				disabled={quantity >= stock}
-				className='bg-gray-300 text-gray-700 text-lg px-2 rounded-md font-bold border border-gray-500 hover:bg-blue-200 disabled:cursor-not-allowed disabled:text-gray-400 disabled:bg-gray-100'
-				onClick={() => increaseItemQuantity(Item)}>
-				+
-			</button>
+		<div className='flex items-center'>
+			<p className='flex items-center justify-center text-gray-700 text-xl font-bold h-10 w-12 border border-black rounded-l-md'>
+				{quantity}
+			</p>
+			<div className=' flex flex-col'>
+				<button
+					disabled={quantity >= stock}
+					className='flex items-center justify-center h-5 w-5 text-cyan-700 text-lg rounded-tr-md font-bold border-t border-r border-b border-black disabled:cursor-not-allowed disabled:text-gray-400 disabled:bg-gray-100'
+					onClick={() => increaseItemQuantity(Item)}>
+					▴
+				</button>
+				<button
+					className='flex items-center justify-center h-5 w-5 text-cyan-700 text-lg rounded-br-md font-bold border-r border-b border-black'
+					onClick={() => decreaseItemQuantity(Item)}>
+					▾
+				</button>
+			</div>
 		</div>
 	)
 }

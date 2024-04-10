@@ -3,20 +3,22 @@ import { devtools } from 'zustand/middleware';
 import { createSelectors } from './createSelectors';
 
 export const MODAL_CART = 1;
-export const MODAL_SEARCH = 2;
+export const MODAL_LOGIN = 2
 
 type State = {
-	[MODAL_CART]: boolean;
-};
+	[MODAL_CART]: boolean
+	[MODAL_LOGIN]: boolean
+}
 
 type Actions = {
-	onClose: (modal: number) => void;
-	onShow: (modal: number) => void;
-};
+	onClose: (modal: number) => void
+	onShow: (modal: number) => void
+}
 
 const initialState = {
 	[MODAL_CART]: false,
-};
+	[MODAL_LOGIN]: false,
+}
 
 type TState = State & Actions;
 

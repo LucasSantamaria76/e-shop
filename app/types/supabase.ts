@@ -1,4 +1,4 @@
-export type Json =
+/* export type Json =
   | string
   | number
   | boolean
@@ -260,3 +260,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+ */

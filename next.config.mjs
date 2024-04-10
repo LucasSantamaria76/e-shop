@@ -10,8 +10,12 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'colegiocei.es',
 			},
+			{
+				protocol: 'https',
+				hostname: 'upload.wikimedia.org',
+			},
 		],
 	},
-};
+}
 
 export default nextConfig;

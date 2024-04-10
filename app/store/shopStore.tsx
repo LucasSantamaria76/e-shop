@@ -28,17 +28,19 @@ interface IState {
 }
 
 interface IActions {
-	addToCart: (ItemKey: string, product: TDetailsProduct) => void;
-	increaseItemQuantity: (Item: string) => void;
-	decreaseItemQuantity: (Item: string) => void;
-	setProducts: (products: TProductsInDB) => void;
+	addToCart: (ItemKey: string, product: TDetailsProduct) => void
+	removeFromCart: (ItemKey: string) => void
+	resetCart: () => void
+	increaseItemQuantity: (ItemKey: string) => void
+	decreaseItemQuantity: (ItemKey: string) => void
+	setProducts: (products: TProductsInDB) => void
 }
 
 const INITIAL_STATE: IState = {
 	products: [],
 	cart: {},
 	totalItems: 0,
-};
+}
 
 const useShopStoreBase = create<IState & IActions>()(
 	devtools(
@@ -48,33 +50,40 @@ const useShopStoreBase = create<IState & IActions>()(
 				set((state) => {
 					if (state.cart[ItemKey]) {
 						if (state.cart[ItemKey].stock > state.cart[ItemKey].quantity) {
-							state.cart[ItemKey].quantity += 1;
-							state.totalItems = state.totalItems + 1;
+							state.cart[ItemKey].quantity += 1
+							state.totalItems = state.totalItems + 1
 						}
 					} else {
-						state.cart[ItemKey] = { ...product, quantity: 1 };
-						state.totalItems = state.totalItems + 1;
+						state.cart[ItemKey] = { ...product, quantity: 1 }
+						state.totalItems = state.totalItems + 1
 					}
-					return state;
+					return state
 				}),
-			increaseItemQuantity: (Item: string) =>
+			removeFromCart: (ItemKey: string) =>
 				set((state) => {
-					if (state.cart[Item].stock > state.cart[Item].quantity) {
-						state.cart[Item].quantity += 1;
-						state.totalItems = state.totalItems + 1;
+					state.totalItems = state.totalItems - state.cart[ItemKey].quantity
+					delete state.cart[ItemKey]
+					return state
+				}),
+			resetCart: () => set({ cart: {}, totalItems: 0 }),
+			increaseItemQuantity: (ItemKey: string) =>
+				set((state) => {
+					if (state.cart[ItemKey].stock > state.cart[ItemKey].quantity) {
+						state.cart[ItemKey].quantity += 1
+						state.totalItems = state.totalItems + 1
 					}
-					return state;
+					return state
 				}),
-			decreaseItemQuantity: (Item: string) =>
+			decreaseItemQuantity: (ItemKey: string) =>
 				set((state) => {
-					if (state.cart[Item].quantity > 1) {
-						state.cart[Item].quantity -= 1;
-						state.totalItems = state.totalItems - 1;
+					if (state.cart[ItemKey].quantity > 1) {
+						state.cart[ItemKey].quantity -= 1
+						state.totalItems = state.totalItems - 1
 					} else {
-						state.totalItems = state.totalItems - 1;
-						delete state.cart[Item];
+						state.totalItems = state.totalItems - 1
+						delete state.cart[ItemKey]
 					}
-					return state;
+					return state
 				}),
 			setProducts: (products: TProductsInDB) =>
 				set({
@@ -92,19 +101,19 @@ const useShopStoreBase = create<IState & IActions>()(
 							availableSizes: products_in_stock
 								.reduce((acc: ISizes[], value) => {
 									!acc.filter((el) => el.sizes_id === value.sizes?.sizes_id).length &&
-										acc.push(value.sizes!);
-									return acc;
+										acc.push(value.sizes!)
+									return acc
 								}, [])
 								.sort((a: ISizes, b: ISizes) => a.sizes_id - b.sizes_id),
 							availableColours: products_in_stock.reduce((acc: string[], value) => {
-								!acc.includes(value.color) && acc.push(value.color);
-								return acc;
+								!acc.includes(value.color) && acc.push(value.color)
+								return acc
 							}, []),
 						})
 					),
 				}),
 		}))
 	)
-);
+)
 
 export const useShopStore = createSelectors(useShopStoreBase);
