@@ -7,10 +7,10 @@ type Props = {
 	icon: React.ReactNode
 	register: any
 	type: string
-	fullWidth: boolean
+	fullWidth?: boolean
 }
 
-const InputText = ({ name, label, error, icon, register, type, fullWidth }: Props) => {
+const InputText = ({ name, label, error, icon, register, type, fullWidth = false }: Props) => {
 	return (
 		<div className={`relative ${fullWidth && 'col-span-2'}`}>
 			<FloatingLabel
@@ -23,7 +23,7 @@ const InputText = ({ name, label, error, icon, register, type, fullWidth }: Prop
 				{...register(name)}
 			/>
 			{icon}
-			{error ? <p className='absolute -bottom-2 left-1 text-xs text-red-500'>{error}</p> : null}
+			{error ? <p className='absolute -bottom-2 left-1 text-[10px] text-red-500'>{error}</p> : null}
 		</div>
 	)
 }

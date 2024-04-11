@@ -6,6 +6,10 @@ import { TInputsLogin } from '@/app/types'
 import { loginSchema } from '@/app/zod-schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Icon, InputText } from '@/app/components'
+import { loginUser } from '@/app/supabase/methods'
+import toast from 'react-simple-toasts'
+import 'react-simple-toasts/dist/theme/sunset.css'
+import { MODAL_LOGIN, useModalStore } from '@/app/store/modalStore'
 
 type Props = {
 	setIsLogin: Dispatch<SetStateAction<boolean>>
@@ -13,6 +17,7 @@ type Props = {
 
 const FormLogin = ({ setIsLogin }: Props) => {
 	const [showPassword, setShowPassword] = useState(false)
+	const onClose = useModalStore.use.onClose()
 
 	const {
 		register,
@@ -23,7 +28,18 @@ const FormLogin = ({ setIsLogin }: Props) => {
 		resolver: zodResolver(loginSchema),
 	})
 
-	const onSubmit: SubmitHandler<TInputsLogin> = (data) => console.log(data)
+	const onSubmit: SubmitHandler<TInputsLogin> = async (data) => {
+		const { success, message } = await loginUser(data)
+
+		!success &&
+			toast(message, {
+				duration: 2000,
+				position: 'top-center',
+				theme: 'sunset',
+			})
+
+		success && onClose(MODAL_LOGIN)
+	}
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
@@ -34,7 +50,6 @@ const FormLogin = ({ setIsLogin }: Props) => {
 				register={register}
 				type={'email'}
 				icon={null}
-				colSpan=''
 			/>
 			<InputText
 				name='password'
@@ -49,7 +64,6 @@ const FormLogin = ({ setIsLogin }: Props) => {
 						onClick={() => setShowPassword(!showPassword)}
 					/>
 				}
-				colSpan={''}
 			/>
 
 			<p className='text-sm text-blue-800 cursor-pointer'>¿Has olvidado tu contraseña?</p>

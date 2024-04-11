@@ -14,7 +14,7 @@ const CardProduct = (product: CardProductProps) => {
 			renderImage={() => (
 				<Link href={`/producto/${product.productId}`} className='relative'>
 					<Image
-						className='object-contain w-[500px] h-[500px]'
+						className='object-contain'
 						width={500}
 						height={500}
 						src={
@@ -47,7 +47,7 @@ const CardProduct = (product: CardProductProps) => {
 				</div>
 			</div>
 		</Card>
-	);
+	)
 };
 
 export default CardProduct;

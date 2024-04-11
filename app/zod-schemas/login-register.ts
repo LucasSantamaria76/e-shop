@@ -21,19 +21,13 @@ export const registerSchema = loginSchema
 				.string({
 					required_error: 'El nombre es requerido',
 				})
-				.min(1, {
-					message: 'El nombre es requerido',
+				.min(2, {
+					message: 'Debe tener mínimo 2 caracteres',
 				}),
 			confirmPassword: z.string(),
 			address: z.string(),
-			phone: z.string().min(10, { message: 'Debe tener 10 o más caracteres' }),
+			phone: z.string(),
 			city: z.string(),
-			avatar: z
-				.any()
-				.refine((files) => files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), {
-					message: 'Se aceptan archivos .jpg, .jpeg, .png y .webp solamente.',
-				})
-				.optional(),
 		})
 	)
 	.partial({
@@ -45,3 +39,10 @@ export const registerSchema = loginSchema
 		message: 'Las contraseñas no coinciden',
 		path: ['confirmPassword'],
 	})
+	
+/* 	avatar: z
+		.any()
+		.refine((files) => files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), {
+			message: 'Se aceptan archivos .jpg, .jpeg, .png y .webp solamente.',
+		})
+		.optional(), */

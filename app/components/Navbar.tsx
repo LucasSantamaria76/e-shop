@@ -6,9 +6,12 @@ import { redressed } from '../fonts'
 import { ProductsInDB, TProductsInDB, useShopStore } from '../store/shopStore'
 import { MODAL_CART, MODAL_LOGIN, useModalStore } from '../store/modalStore'
 import { CartDialog, LoginDialog, SearchDialog } from './dialogs'
-import { Badge, Button, TextInput } from 'flowbite-react'
+import { Avatar, Badge, Button, Dropdown, TextInput } from 'flowbite-react'
 import { useEffect } from 'react'
 import Icon from './Icon'
+import { supabase } from '../supabase/client'
+import { UserResponse } from '@supabase/supabase-js'
+import { TUser } from '../types'
 
 const getProducts = async () => {
 	try {
@@ -29,10 +32,23 @@ export const Navbar = (props: NavbarProps) => {
 	const totalItems = useShopStore.use.totalItems()
 	const onShow = useModalStore.use.onShow()
 	const setProducts = useShopStore.use.setProducts()
+	const user = useShopStore.use.user()
+	const setUser = useShopStore.use.setUser()
 
 	useEffect(() => {
 		getProducts().then((products: any) => setProducts(products))
-	}, [setProducts])
+		supabase.auth.onAuthStateChange(async (_, session) => {
+			if (session) {
+				const { data } = await supabase
+					.from('profiles')
+					.select('name, address, phone, city, avatar_url, created_at')
+					.eq('id', session.user.id)
+					.single()
+				const user = { ...data, email: session.user.email! } as TUser
+				setUser(user)
+			} else setUser(null)
+		})
+	}, [setProducts, setUser])
 
 	return (
 		<>
@@ -54,7 +70,32 @@ export const Navbar = (props: NavbarProps) => {
 									</Badge>
 								) : null}
 							</div>
-							<Icon size={32} name={'CircleUserRound'} onClick={() => onShow(MODAL_LOGIN)} />
+							{user ? (
+								<Dropdown
+									label={
+										<Avatar
+											img={user.avatar_url}
+											alt='avatar user'
+											rounded
+											className='border border-gray-500 rounded-full  hover:ring-1 hover:ring-cyan-500'
+										/>
+									}
+									arrowIcon={false}
+									inline>
+									<Dropdown.Header>
+										<span className='block text-sm font-semibold'>{user.name}</span>
+										<span className='block truncate text-xs text-gray-400'>{user.email}</span>
+									</Dropdown.Header>
+									<Dropdown.Item>Editar perfil</Dropdown.Item>
+									<Dropdown.Item>Lista de deseos</Dropdown.Item>
+									<Dropdown.Divider />
+									<Dropdown.Item onClick={async () => await supabase.auth.signOut()}>
+										Cerrar sesión
+									</Dropdown.Item>
+								</Dropdown>
+							) : (
+								<Icon size={32} name={'CircleUserRound'} onClick={() => onShow(MODAL_LOGIN)} />
+							)}
 						</div>
 					</div>
 				</Container>

@@ -5,26 +5,27 @@ import { create } from 'zustand';
 import { createSelectors } from './createSelectors';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { ISizes, TDetailsProduct, TProductInStore } from '../types';
-import { supabase } from '../supabase/client';
-import { QueryData } from '@supabase/supabase-js';
+import { ISizes, TDetailsProduct, TProductInStore, TUser } from '../types'
+import { supabase } from '../supabase/client'
+import { QueryData } from '@supabase/supabase-js'
 
 export const ProductsInDB = supabase
 	.from('products')
 	.select(
 		'*,categories(name),subcategories(name),products_in_stock(images,color,sizes(name,sizes_id))'
-	);
+	)
 
-export type TProductsInDB = QueryData<typeof ProductsInDB>;
+export type TProductsInDB = QueryData<typeof ProductsInDB>
 
 export interface IProductCart extends TDetailsProduct {
-	quantity: number;
+	quantity: number
 }
 
 interface IState {
-	products: TProductInStore[];
-	cart: Record<string, IProductCart>;
-	totalItems: number;
+	products: TProductInStore[]
+	cart: Record<string, IProductCart>
+	totalItems: number
+	user: TUser
 }
 
 interface IActions {
@@ -34,12 +35,14 @@ interface IActions {
 	increaseItemQuantity: (ItemKey: string) => void
 	decreaseItemQuantity: (ItemKey: string) => void
 	setProducts: (products: TProductsInDB) => void
+	setUser: (user: TUser) => void
 }
 
 const INITIAL_STATE: IState = {
 	products: [],
 	cart: {},
 	totalItems: 0,
+	user: null,
 }
 
 const useShopStoreBase = create<IState & IActions>()(
@@ -112,6 +115,7 @@ const useShopStoreBase = create<IState & IActions>()(
 						})
 					),
 				}),
+			setUser: (user: TUser) => set({ user }),
 		}))
 	)
 )

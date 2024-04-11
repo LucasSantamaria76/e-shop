@@ -5,7 +5,7 @@ import { ISizes } from './types';
 
 const getProducts = async () => {
 	try {
-		const supabase = await CreateSupabaseServerClient();
+		const supabase = await CreateSupabaseServerClient()
 		const productsWithInStockQuery = supabase
 			.from('products')
 			.select('*,products_in_stock(*),sizes(name,sizes_id)');

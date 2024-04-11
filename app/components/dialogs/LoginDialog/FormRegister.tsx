@@ -1,4 +1,4 @@
-import { Button, FileInput, FloatingLabel, Label } from 'flowbite-react'
+import { Button } from 'flowbite-react'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { TInputsRegister } from '@/app/types'
@@ -6,6 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { registerSchema } from '@/app/zod-schemas'
 import { InputText } from '@/app/components'
 import { Icon } from '@/app/components'
+import { registerUser } from '@/app/supabase/methods'
+import toast from 'react-simple-toasts'
+import 'react-simple-toasts/dist/theme/sunset.css'
+import 'react-simple-toasts/dist/theme/ocean-wave.css'
+import { MODAL_LOGIN, useModalStore } from '@/app/store/modalStore'
 
 type Props = {
 	setIsLogin: Dispatch<SetStateAction<boolean>>
@@ -13,17 +18,7 @@ type Props = {
 
 const FormRegister = ({ setIsLogin }: Props) => {
 	const [showPassword, setShowPassword] = useState(false)
-
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-		reset,
-	} = useForm<TInputsRegister>({
-		resolver: zodResolver(registerSchema),
-	})
-
-	const onSubmit: SubmitHandler<TInputsRegister> = (data) => console.log(data)
+	const onClose = useModalStore.use.onClose()
 
 	const fields = [
 		{
@@ -38,28 +33,24 @@ const FormRegister = ({ setIsLogin }: Props) => {
 			label: 'Nombre',
 			type: 'text',
 			icon: null,
-			fullWidth: false,
 		},
 		{
 			name: 'phone',
 			label: 'Teléfono',
 			type: 'text',
 			icon: null,
-			fullWidth: false,
 		},
 		{
 			name: 'address',
 			label: 'Domicilio',
 			type: 'text',
 			icon: null,
-			fullWidth: false,
 		},
 		{
 			name: 'city',
 			label: 'Ciudad',
 			type: 'text',
 			icon: null,
-			fullWidth: false,
 		},
 		{
 			name: 'password',
@@ -72,7 +63,6 @@ const FormRegister = ({ setIsLogin }: Props) => {
 					onClick={() => setShowPassword(!showPassword)}
 				/>
 			),
-			fullWidth: false,
 		},
 		{
 			name: 'confirmPassword',
@@ -85,9 +75,43 @@ const FormRegister = ({ setIsLogin }: Props) => {
 					onClick={() => setShowPassword(!showPassword)}
 				/>
 			),
-			fullWidth: false,
 		},
 	]
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+	} = useForm<TInputsRegister>({
+		resolver: zodResolver(registerSchema),
+	})
+
+	const onSubmit: SubmitHandler<TInputsRegister> = async ({
+		email,
+		password,
+		name,
+		address,
+		phone,
+		city,
+	}) => {
+		const { message, success } = await registerUser({
+			email,
+			password,
+			name,
+			address: address || '',
+			phone: phone || '',
+			city: city || '',
+		})
+
+		toast(message, {
+			duration: 2000,
+			position: 'top-center',
+			theme: success ? 'ocean-wave' : 'sunset',
+		})
+
+		success && onClose(MODAL_LOGIN)
+	}
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
@@ -105,14 +129,6 @@ const FormRegister = ({ setIsLogin }: Props) => {
 						fullWidth={field.fullWidth}
 					/>
 				))}
-				<div className='col-span-2 mb-4'>
-					<Label htmlFor='file-upload' value='Avatar' className='text-xs ml-1' />
-					<FileInput id='file-upload' {...register('avatar')} />
-					{errors?.avatar ? (
-						//@ts-ignore
-						<p className='text-xs text-red-500'>{errors?.avatar?.message}</p>
-					) : null}
-				</div>
 			</div>
 			<Button gradientMonochrome='info' type='submit'>
 				Enviar

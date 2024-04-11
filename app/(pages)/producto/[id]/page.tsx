@@ -38,9 +38,9 @@ const ProductPage = ({ params: { id } }: Props) => {
 				<div className='flex flex-col md:flex-row mx-4'>
 					<div className='flex flex-col w-1/2 px-4'>
 						<Image
-							className='object-contain w-[400px] h-[400px] mb-1 rounded-md'
-							width={400}
-							height={400}
+							className='object-contain w-[400px] h-auto mb-1 rounded-md'
+							width={0}
+							height={0}
 							src={
 								productSelected?.images[imageSelected]
 									? productSelected?.images[imageSelected]
@@ -132,7 +132,7 @@ const ProductPage = ({ params: { id } }: Props) => {
 				</div>
 			</div>
 		</div>
-	);
+	)
 };
 
 export default ProductPage;

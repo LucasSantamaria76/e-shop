@@ -16,9 +16,9 @@ const Thumbnail = ({ images, imageSelected, setImageSelected }: Props) => {
 					onClick={() => setImageSelected(idx)}
 					key={image}>
 					<Image
-						className='object-contain w-full h-full'
-						width={100}
-						height={100}
+						className='object-contain w-full h-auto'
+						width={0}
+						height={0}
 						src={image}
 						alt={''}
 					/>
@@ -26,6 +26,6 @@ const Thumbnail = ({ images, imageSelected, setImageSelected }: Props) => {
 				</div>
 			))}
 		</div>
-	);
+	)
 };
 export default Thumbnail;
