@@ -10,7 +10,6 @@ import { Avatar, Badge, Button, Dropdown, TextInput } from 'flowbite-react'
 import { useEffect } from 'react'
 import Icon from './Icon'
 import { supabase } from '../supabase/client'
-import { UserResponse } from '@supabase/supabase-js'
 import { TUser } from '../types'
 
 const getProducts = async () => {
@@ -89,7 +88,11 @@ export const Navbar = (props: NavbarProps) => {
 									<Dropdown.Item>Editar perfil</Dropdown.Item>
 									<Dropdown.Item>Lista de deseos</Dropdown.Item>
 									<Dropdown.Divider />
-									<Dropdown.Item onClick={async () => await supabase.auth.signOut()}>
+									<Dropdown.Item
+										onClick={() => {
+											fetch('/auth/signout', { method: 'POST' })
+											setUser(null)
+										}}>
 										Cerrar sesión
 									</Dropdown.Item>
 								</Dropdown>

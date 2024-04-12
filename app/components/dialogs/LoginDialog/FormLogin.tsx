@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Button, FloatingLabel } from 'flowbite-react'
+import { Button, FloatingLabel, Spinner } from 'flowbite-react'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { TInputsLogin } from '@/app/types'
@@ -22,8 +22,7 @@ const FormLogin = ({ setIsLogin }: Props) => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
-		reset,
+		formState: { errors, isSubmitting },
 	} = useForm<TInputsLogin>({
 		resolver: zodResolver(loginSchema),
 	})
@@ -68,8 +67,8 @@ const FormLogin = ({ setIsLogin }: Props) => {
 
 			<p className='text-sm text-blue-800 cursor-pointer'>¿Has olvidado tu contraseña?</p>
 			<Button gradientMonochrome='info' type='submit'>
+				{isSubmitting && <Spinner size='sm' className='mr-4' />}
 				Enviar
-				{/* <RiMailSendLine className='ml-4 h-5 w-5' /> */}
 			</Button>
 			<span className='border-b border-black my-2' />
 			<Button outline gradientDuoTone='pinkToOrange'>

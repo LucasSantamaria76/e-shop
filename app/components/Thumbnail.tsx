@@ -15,13 +15,7 @@ const Thumbnail = ({ images, imageSelected, setImageSelected }: Props) => {
 					}`}
 					onClick={() => setImageSelected(idx)}
 					key={image}>
-					<Image
-						className='object-contain w-full h-auto'
-						width={0}
-						height={0}
-						src={image}
-						alt={''}
-					/>
+					<Image className='object-contain' width={64} height={64} src={image} alt={''} />
 					<div className='bg-transparent transition duration-500 absolute bottom-0 top-0 right-0 left-0 hover:bg-gray-900 opacity-25'></div>
 				</div>
 			))}

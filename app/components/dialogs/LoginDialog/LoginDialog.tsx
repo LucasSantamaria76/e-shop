@@ -16,7 +16,6 @@ const LoginDialog = () => {
 		<Modal
 			dismissible
 			show={isOpen}
-			size='lg'
 			theme={modalTheme}
 			position='center'
 			onClose={() => onClose(MODAL_LOGIN)}

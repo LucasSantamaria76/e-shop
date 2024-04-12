@@ -11,6 +11,7 @@ interface RegisterProps extends loginProps {
 	address: string
 	phone: string
 	city: string
+	avatar_url: string
 }
 
 export const loginUser = async ({ email, password }: loginProps) => {
@@ -35,6 +36,7 @@ export const registerUser = async ({
 	address,
 	phone,
 	city,
+	avatar_url,
 }: RegisterProps) => {
 	try {
 		const { data, error } = await supabase.auth.signUp({
@@ -46,8 +48,7 @@ export const registerUser = async ({
 					address,
 					phone,
 					city,
-					avatar_url:
-						'https://zlphiklznxepieoewbpr.supabase.co/storage/v1/object/sign/avatars/male-1.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdmF0YXJzL21hbGUtMS5wbmciLCJpYXQiOjE3MTI4NjQzNDgsImV4cCI6NDg2NjQ2NDM0OH0.OS7yTUNTY3n_K3dMU7odK7EPEDTTjaGtask0Tu5-pmk&t=2024-04-11T19%3A39%3A08.513Z',
+					avatar_url,
 				},
 			},
 		})
